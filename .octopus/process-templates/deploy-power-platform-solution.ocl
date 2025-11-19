@@ -55,7 +55,7 @@ parameter "template.tag" {
 }
 
 step "import-power-platform-solution-v2" {
-    name = "Import Power Platform Solution v2"
+    name = "Import Power Platform Solution"
     properties = {
         Octopus.Action.TargetRoles = "#{template.tag}"
     }
