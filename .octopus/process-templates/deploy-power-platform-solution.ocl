@@ -54,6 +54,15 @@ parameter "template.tag" {
     label = "Target tag"
 }
 
+parameter "template.teams.channel" {
+    display_settings = {
+        Octopus.ControlType = "SingleLineText"
+    }
+    help_text = ""
+    is_optional = true
+    label = "Teams Channel Name"
+}
+
 step "import-power-platform-solution-v2" {
     name = "Import Power Platform Solution"
     properties = {
