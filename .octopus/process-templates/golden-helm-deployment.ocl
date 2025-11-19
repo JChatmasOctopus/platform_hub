@@ -136,7 +136,7 @@ step "deploy-a-helm-chart" {
 
         git_dependencies "TemplateValues-1" {
             default_branch = "main"
-            git_credential_id = "GitCredentialIds-1"
+            git_credential_id = "GitCredentials-41"
             git_credential_type = "Library"
             repository_uri = "#{template.repository.url}"
         }
@@ -150,6 +150,7 @@ step "deploy-a-helm-chart" {
                 PackageParameterName = "template.helm.package.container"
                 Purpose = "DockerImageReference"
                 SelectionMode = "deferred"
+                ValuesFilePath = ""
             }
         }
     }
