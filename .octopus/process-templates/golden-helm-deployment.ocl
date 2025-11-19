@@ -1,5 +1,6 @@
 name = "Golden Helm Template"
 description = "A reusable process template for deploying Helm charts in a standardized and compliant manner. This template includes built-in best practices for versioning, environment targeting, and audit visibility. Ideal for teams adopting GitOps or managing Kubernetes workloads at scale."
+
 parameter "template.kubernetes.target.tag" {
     display_settings = {
         Octopus.ControlType = "TargetTags"
@@ -7,6 +8,7 @@ parameter "template.kubernetes.target.tag" {
     help_text = "The Kubernetes cluster you want to install this helm chart on"
     label = "Kubernetes Target Tag"
 }
+
 parameter "template.worker.pool" {
     display_settings = {
         Octopus.ControlType = "WorkerPool"
@@ -14,6 +16,7 @@ parameter "template.worker.pool" {
     help_text = "Choose the work pool where to run scripts"
     label = "Worker Pool"
 }
+
 parameter "template.chart.directory" {
     display_settings = {
         Octopus.ControlType = "SingleLineText"
@@ -21,6 +24,7 @@ parameter "template.chart.directory" {
     help_text = "The Chart Directory of the helm chart"
     label = "Chart Directory"
 }
+
 parameter "template.kubernetes.namespace" {
     display_settings = {
         Octopus.ControlType = "SingleLineText"
@@ -28,6 +32,7 @@ parameter "template.kubernetes.namespace" {
     help_text = "Kubernetes Namespace to deploy the Helm chart"
     label = "Kubernetes Namespace"
 }
+
 parameter "template.repository.url" {
     display_settings = {
         Octopus.ControlType = "SingleLineText"
@@ -35,6 +40,7 @@ parameter "template.repository.url" {
     help_text = "Repository URL for the Helm Chart"
     label = "Repository URL"
 }
+
 parameter "template.chart.values" {
     display_settings = {
         Octopus.ControlType = "SingleLineText"
@@ -42,6 +48,7 @@ parameter "template.chart.values" {
     help_text = "Location of chart Values "
     label = "Chart Values"
 }
+
 parameter "template.application.name" {
     display_settings = {
         Octopus.ControlType = "SingleLineText"
@@ -49,6 +56,7 @@ parameter "template.application.name" {
     help_text = "Name of application"
     label = "Application Name"
 }
+
 parameter "template.helm.package.container" {
     display_settings = {
         Octopus.ControlType = "Package"
@@ -56,8 +64,10 @@ parameter "template.helm.package.container" {
     help_text = "Container helm chart references"
     label = "Container Image"
 }
+
 step "validate-helm-values" {
     name = "Validate Helm Values"
+
     action {
         action_type = "Octopus.Script"
         properties = {
@@ -70,8 +80,10 @@ step "validate-helm-values" {
         worker_pool_variable = "#{template.worker.pool}"
     }
 }
+
 step "inject-secrets-from-vault" {
     name = "Inject Secrets From Vault"
+
     action {
         action_type = "Octopus.Script"
         properties = {
@@ -84,11 +96,13 @@ step "inject-secrets-from-vault" {
         worker_pool_variable = "#{template.worker.pool}"
     }
 }
+
 step "deploy-a-helm-chart" {
     name = "Deploy a Helm Chart"
     properties = {
         Octopus.Action.TargetRoles = "#{template.kubernetes.target.tag}"
     }
+
     action {
         action_type = "Octopus.HelmChartUpgrade"
         properties = {
@@ -112,18 +126,21 @@ step "deploy-a-helm-chart" {
             Octopus.Action.Script.ScriptSource = "GitRepository"
         }
         worker_pool_variable = ""
+
         git_dependencies {
             default_branch = "main"
-            git_credential_id = "GitCredentialIds-1"
+            git_credential_id = "GitCredentials-41"
             git_credential_type = "Library"
             repository_uri = "#{template.repository.url}"
         }
+
         git_dependencies "TemplateValues-1" {
             default_branch = "main"
             git_credential_id = "GitCredentialIds-1"
             git_credential_type = "Library"
             repository_uri = "#{template.repository.url}"
         }
+
         packages "template.helm.package.container" {
             acquisition_location = "NotAcquired"
             feed = "octopus-server-built-in"
@@ -137,8 +154,10 @@ step "deploy-a-helm-chart" {
         }
     }
 }
+
 step "notify-stakeholders" {
     name = "Notify Stakeholders"
+
     action {
         action_type = "Octopus.Script"
         properties = {
@@ -151,11 +170,13 @@ step "notify-stakeholders" {
         worker_pool_variable = "#{template.worker.pool}"
     }
 }
+
 step "run-a-script" {
     name = "Run a Script"
     properties = {
         Octopus.Action.TargetRoles = "#{template.kubernetes.target.tag}"
     }
+
     action {
         action_type = "Octopus.Script"
         properties = {
