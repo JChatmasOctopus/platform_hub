@@ -10,6 +10,7 @@ parameter "Step.PowerPlatform.EnvironmentURL" {
     display_settings = {
         Octopus.ControlType = "SingleLineText"
     }
+    help_text = ""
     label = "Environment URL"
 }
 
@@ -17,6 +18,7 @@ parameter "Step.PowerPlatform.TenantID" {
     display_settings = {
         Octopus.ControlType = "SingleLineText"
     }
+    help_text = ""
     label = "Tenant ID"
 }
 
@@ -24,6 +26,7 @@ parameter "Step.PowerPlatform.ClientID" {
     display_settings = {
         Octopus.ControlType = "SingleLineText"
     }
+    help_text = ""
     label = "Client ID"
 }
 
@@ -31,6 +34,7 @@ parameter "Step.PowerPlatform.ClientSecret" {
     display_settings = {
         Octopus.ControlType = "Sensitive"
     }
+    help_text = ""
     label = "Client Secret"
 }
 
@@ -38,6 +42,7 @@ parameter "Step.PowerPlatform.PackageName" {
     display_settings = {
         Octopus.ControlType = "Package"
     }
+    help_text = ""
     label = "Package Name"
 }
 
@@ -49,13 +54,24 @@ parameter "template.worker.pool" {
     label = "Worker pool"
 }
 
+parameter "template.tag" {
+    display_settings = {
+        Octopus.ControlType = "TargetTags"
+    }
+    help_text = ""
+    label = "Target tag"
+}
+
 step "import-power-platform-solution-v2" {
     name = "Import Power Platform Solution v2"
+    properties = {
+        Octopus.Action.TargetRoles = "#{template.tag}"
+    }
 
     action {
         action_type = "Octopus.Script"
         properties = {
-            Octopus.Action.RunOnServer = "true"
+            Octopus.Action.RunOnServer = "false"
             Octopus.Action.Script.ScriptBody = <<-EOT
                 #!/usr/bin/env pwsh
                 
@@ -276,10 +292,10 @@ step "import-power-platform-solution-v2" {
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
         }
-        worker_pool_variable = "#{template.worker.pool}"
 
         packages "Step.PowerPlatform.PackageName" {
             acquisition_location = "Server"
+            feed = "octopus-server-built-in"
             package_id = ""
             properties = {
                 Extract = "True"
@@ -292,11 +308,14 @@ step "import-power-platform-solution-v2" {
 
 step "run-smoke-test" {
     name = "Run Smoke Test"
+    properties = {
+        Octopus.Action.TargetRoles = "#{template.tag}"
+    }
 
     action {
         action_type = "Octopus.Script"
         properties = {
-            Octopus.Action.RunOnServer = "true"
+            Octopus.Action.RunOnServer = "false"
             Octopus.Action.Script.ScriptBody = <<-EOT
                 $ErrorActionPreference = "Stop"
                 
@@ -358,21 +377,22 @@ step "run-smoke-test" {
             Octopus.Action.Script.Syntax = "PowerShell"
             OctopusUseBundledTooling = "False"
         }
-        worker_pool_variable = "#{template.worker.pool}"
     }
 }
 
 step "send-teams-notification" {
     name = "Send Teams Notification"
+    properties = {
+        Octopus.Action.TargetRoles = "#{template.tag}"
+    }
 
     action {
         action_type = "Octopus.Script"
         properties = {
-            Octopus.Action.RunOnServer = "true"
+            Octopus.Action.RunOnServer = "false"
             Octopus.Action.Script.ScriptBody = "write-host \"Posting deployment status to Teams\""
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
         }
-        worker_pool_variable = "#{template.worker.pool}"
     }
 }
