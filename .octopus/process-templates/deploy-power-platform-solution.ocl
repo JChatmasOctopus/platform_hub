@@ -46,14 +46,6 @@ parameter "Step.PowerPlatform.PackageName" {
     label = "Package Name"
 }
 
-parameter "template.worker.pool" {
-    display_settings = {
-        Octopus.ControlType = "WorkerPool"
-    }
-    help_text = ""
-    label = "Worker pool"
-}
-
 parameter "template.tag" {
     display_settings = {
         Octopus.ControlType = "TargetTags"
