@@ -1,18 +1,25 @@
 name = "Require manual intervention"
-violation_action = "block"
+violation_action = "warn"
+violation_reason = "Manual intervention required to deploy to production."
 
 conditions {
     rego = <<-EOT
             package require_manual_intervention
-            
-            default result := {"allowed": true}
+            default result := {"allowed": false}
+                    result := {"allowed": true} if {
+                        some step in input.Steps
+                        step.ActionType == "Octopus.Manual"
+                    }
             EOT
 }
 
 scope {
     rego = <<-EOT
-            package require_manual_intervention
-            
-            default evaluate := true
+                package require_manual_intervention
+                default evaluate := false
+                evaluate := true if { 
+                    startswith(input.ProjectGroup.Slug, "compliant-")
+                    not input.Runbook
+                }
             EOT
 }
