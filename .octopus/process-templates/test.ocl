@@ -1,4 +1,4 @@
-name = "compliance-check"
+name = "Test"
 description = ""
 
 icon {
@@ -32,12 +32,12 @@ step "run-a-script" {
         properties = {
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptBody = <<-EOT
-                usern=$(get_octopusvariable "ProcessTemplates[compliance-check].compliance.check.account.Username")
-                passwo=$(get_octopusvariable "ProcessTemplates[compliance-check].compliance.check.account.Password")
+                usern=$(get_octopusvariable "ProcessTemplates[Test].compliance.check.account.Username")
+                passwo=$(get_octopusvariable "ProcessTemplates[Test].compliance.check.account.Password")
                 echo "User name: $usern"
                 echo "Password: $passwo"
                 
-                echo "Direct: #{ProcessTemplates[compliance-check].compliance.check.account.Username}"
+                echo "Direct: #{ProcessTemplates[Test].compliance.check.account.Username}"
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "Bash"
