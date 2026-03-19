@@ -34,8 +34,8 @@ step "run-a-script" {
             Octopus.Action.Script.ScriptBody = <<-EOT
                 usern=$(get_octopusvariable "ProcessTemplates[Test].compliance-account.Username")
                 passwo=$(get_octopusvariable "ProcessTemplates[Test].compliance-account.Password")
-                echo "User name: $usern"
-                echo "Password: $passwo"
+                echo "User names: $usern"
+                echo "Passwords: $passwo"
                 
                 echo "Direct: #{ProcessTemplates[Test].compliance-account.Username}"
                 EOT
