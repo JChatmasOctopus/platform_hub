@@ -1,4 +1,4 @@
-name = "Smoke test service"
+name = "compliance-check"
 description = ""
 
 icon {
@@ -6,7 +6,7 @@ icon {
     id = "fire-alt"
 }
 
-parameter "template.account" {
+parameter "compliance.check.account" {
     display_settings = {
         Octopus.ControlType = "UsernamePasswordAccount"
     }
@@ -32,12 +32,12 @@ step "run-a-script" {
         properties = {
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptBody = <<-EOT
-                usern=$(get_octopusvariable "ProcessTemplates[test].template.account.Username")
-                passwo=$(get_octopusvariable "ProcessTemplates[test].template.account.Password")
+                usern=$(get_octopusvariable "ProcessTemplates[compliance-check].compliance.check.account.Username")
+                passwo=$(get_octopusvariable "ProcessTemplates[compliance-check].compliance.check.account.Password")
                 echo "User name: $usern"
                 echo "Password: $passwo"
                 
-                echo "Direct: #{ProcessTemplates[test].template.account.Username}"
+                echo "Direct: #{ProcessTemplates[compliance-check].compliance.check.account.Username}"
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "Bash"
