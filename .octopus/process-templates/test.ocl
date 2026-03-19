@@ -6,7 +6,7 @@ icon {
     id = "fire-alt"
 }
 
-parameter "compliance.account" {
+parameter "compliance-account" {
     display_settings = {
         Octopus.ControlType = "UsernamePasswordAccount"
     }
