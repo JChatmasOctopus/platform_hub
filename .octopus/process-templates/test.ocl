@@ -6,7 +6,7 @@ icon {
     id = "fire-alt"
 }
 
-parameter "compliance.check.account" {
+parameter "compliance.account" {
     display_settings = {
         Octopus.ControlType = "UsernamePasswordAccount"
     }
@@ -32,12 +32,12 @@ step "run-a-script" {
         properties = {
             Octopus.Action.RunOnServer = "true"
             Octopus.Action.Script.ScriptBody = <<-EOT
-                usern=$(get_octopusvariable "ProcessTemplates[Test].compliance.check.account.Username")
-                passwo=$(get_octopusvariable "ProcessTemplates[Test].compliance.check.account.Password")
+                usern=$(get_octopusvariable "ProcessTemplates[Test].compliance.account.Username")
+                passwo=$(get_octopusvariable "ProcessTemplates[Test].compliance.account.Password")
                 echo "User name: $usern"
                 echo "Password: $passwo"
                 
-                echo "Direct: #{ProcessTemplates[Test].compliance.check.account.Username}"
+                echo "Direct: #{ProcessTemplates[Test].compliance.account.Username}"
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "Bash"
