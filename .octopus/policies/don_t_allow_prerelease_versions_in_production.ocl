@@ -1,0 +1,43 @@
+name = "Don't allow prerelease versions in Production"
+violation_action = "block"
+
+conditions {
+    rego = <<-EOT
+            package don_t_allow_prerelease_versions_in_production
+            
+            # Default: Deny all deployments
+            default result := {"allowed": false}
+            
+            # Allow: If a specific Process Template is used and not bypassed
+            result := {"allowed": true} if {
+            	some step in input.Steps
+            
+            	# Ensure the step is derived from a Process Template
+            	step.Source.Type == "Process Template"
+            
+            	# Target a specific template by its unique slug or ID
+            	step.Source.SlugOrId == "<ProcessTemplate-slug>"
+            
+            	# Verify this specific step hasn't been added to the skipped list
+            	not step.Id in input.SkippedSteps
+            }
+            EOT
+}
+
+scope {
+    rego = <<-EOT
+            package don_t_allow_prerelease_versions_in_production
+            
+            default evaluate := true
+            
+            # The following are examples of available scoping options:
+            # evaluate if {    
+            	# Scope evaluation by Environment name    
+            	# input.Environment.Name == "<environment-name>"    
+            	# Scope evaluation to Space Id    
+            	# input.Space.Id == "<space-id>"
+            	# Scope evaluation to multiple Spaces
+                # input.Project.Slug in ["<project-slug>", "<project-slug2>"]
+            # }
+            EOT
+}
