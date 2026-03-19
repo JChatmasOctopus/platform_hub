@@ -16,7 +16,7 @@ conditions {
             	step.Source.Type == "Process Template"
             
             	# Target a specific template by its unique slug or ID
-            	step.Source.SlugOrId == "<ProcessTemplate-slug>"
+            	step.Source.SlugOrId == "test"
             
             	# Verify this specific step hasn't been added to the skipped list
             	not step.Id in input.SkippedSteps
@@ -28,7 +28,7 @@ scope {
     rego = <<-EOT
             package don_t_allow_prerelease_versions_in_production
             
-            default evaluate := true
+            default evaluate := false
             
             # The following are examples of available scoping options:
             # evaluate if {    
