@@ -44,6 +44,16 @@ parameter "compliance.check.account" {
     value "vault-credentials" {}
 }
 
+parameter "test.param" {
+    display_settings = {
+        Octopus.ControlType = "SingleLineText"
+    }
+    help_text = ""
+    label = ""
+
+    value "TheResult" {}
+}
+
 step "run-a-script" {
     name = "Run a Script"
 
@@ -57,7 +67,6 @@ step "run-a-script" {
                 echo "User name: $usern"
                 echo "Password: $passwo"
                 echo "Direct: #{ProcessTemplates[Test].compliance-account.Username}"
-                
                 echo "============================================"
                 echo "Process Template Account Parameter Test"
                 echo "Template: Test"
@@ -88,11 +97,18 @@ step "run-a-script" {
                 echo "[get_octopusvariable] Password: $(get_octopusvariable "ProcessTemplates[Test].compliance.check.account.Password")"
                 
                 echo ""
+                echo "--- 4. test.param (single-line text, NOT an account) ---"
+                echo ""
+                echo "[Octostache] Value: #{ProcessTemplates[Test].test.param}"
+                echo "[get_octopusvariable] Value: $(get_octopusvariable "ProcessTemplates[Test].test.param")"
+                
+                echo ""
                 echo "--- Raw account references (no .Username/.Password) ---"
                 echo ""
                 echo "[get_octopusvariable] compliance-account: $(get_octopusvariable "ProcessTemplates[Test].compliance-account")"
                 echo "[get_octopusvariable] test.account: $(get_octopusvariable "ProcessTemplates[Test].test.account")"
                 echo "[get_octopusvariable] compliance.check.account: $(get_octopusvariable "ProcessTemplates[Test].compliance.check.account")"
+                echo "[get_octopusvariable] test.param: $(get_octopusvariable "ProcessTemplates[Test].test.param")"
                 
                 echo ""
                 echo "--- Without ProcessTemplates prefix (control) ---"
@@ -100,6 +116,7 @@ step "run-a-script" {
                 echo "[Octostache] compliance-account.Username: #{compliance-account.Username}"
                 echo "[Octostache] test.account.Username: #{test.account.Username}"
                 echo "[Octostache] compliance.check.account.Username: #{compliance.check.account.Username}"
+                echo "[Octostache] test.param: #{test.param}"
                 
                 echo ""
                 echo "============================================"
