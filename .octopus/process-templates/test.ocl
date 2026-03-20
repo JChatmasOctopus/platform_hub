@@ -24,6 +24,26 @@ parameter "tmp.workerpool" {
     label = "Worker pool"
 }
 
+parameter "test.account" {
+    display_settings = {
+        Octopus.ControlType = "UsernamePasswordAccount"
+    }
+    help_text = ""
+    label = "Test account"
+
+    value "vault-credentials" {}
+}
+
+parameter "compliance.check.account" {
+    display_settings = {
+        Octopus.ControlType = "UsernamePasswordAccount"
+    }
+    help_text = ""
+    label = "Compliance check account"
+
+    value "vault-credentials" {}
+}
+
 step "run-a-script" {
     name = "Run a Script"
 
