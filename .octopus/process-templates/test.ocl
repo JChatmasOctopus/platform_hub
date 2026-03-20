@@ -111,6 +111,7 @@ step "run-a-script" {
                 echo ""
                 echo "[Octostache] Value: #{ProcessTemplates[test].test.param}"
                 echo "[get_octopusvariable] Value: $(get_octopusvariable "ProcessTemplates[test].test.param")"
+                echo "[get_octopusvariable] Value (without process template namespace): $(get_octopusvariable "test.param")"
                 
                 echo ""
                 echo "--- Raw account references (no .Username/.Password) ---"
