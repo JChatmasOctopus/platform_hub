@@ -93,32 +93,32 @@ step "run-a-script" {
                 echo ""
                 echo "--- 2. test.account (single dot) ---"
                 echo ""
-                echo "[Octostache] Username: #{ProcessTemplates[Test].test.account.Username}"
-                echo "[Octostache] Password: #{ProcessTemplates[Test].test.account.Password}"
-                echo "[get_octopusvariable] Username: $(get_octopusvariable "ProcessTemplates[Test].test.account.Username")"
-                echo "[get_octopusvariable] Password: $(get_octopusvariable "ProcessTemplates[Test].test.account.Password")"
+                echo "[Octostache] Username: #{ProcessTemplates[test].test.account.Username}"
+                echo "[Octostache] Password: #{ProcessTemplates[test].test.account.Password}"
+                echo "[get_octopusvariable] Username: $(get_octopusvariable "ProcessTemplates[test].test.account.Username")"
+                echo "[get_octopusvariable] Password: $(get_octopusvariable "ProcessTemplates[test].test.account.Password")"
                 
                 echo ""
                 echo "--- 3. compliance.check.account (multi-dot) ---"
                 echo ""
-                echo "[Octostache] Username: #{ProcessTemplates[Test].compliance.check.account.Username}"
-                echo "[Octostache] Password: #{ProcessTemplates[Test].compliance.check.account.Password}"
-                echo "[get_octopusvariable] Username: $(get_octopusvariable "ProcessTemplates[Test].compliance.check.account.Username")"
-                echo "[get_octopusvariable] Password: $(get_octopusvariable "ProcessTemplates[Test].compliance.check.account.Password")"
+                echo "[Octostache] Username: #{ProcessTemplates[test].compliance.check.account.Username}"
+                echo "[Octostache] Password: #{ProcessTemplates[test].compliance.check.account.Password}"
+                echo "[get_octopusvariable] Username: $(get_octopusvariable "ProcessTemplates[test].compliance.check.account.Username")"
+                echo "[get_octopusvariable] Password: $(get_octopusvariable "ProcessTemplates[test].compliance.check.account.Password")"
                 
                 echo ""
                 echo "--- 4. test.param (single-line text, NOT an account) ---"
                 echo ""
-                echo "[Octostache] Value: #{ProcessTemplates[Test].test.param}"
-                echo "[get_octopusvariable] Value: $(get_octopusvariable "ProcessTemplates[Test].test.param")"
+                echo "[Octostache] Value: #{ProcessTemplates[test].test.param}"
+                echo "[get_octopusvariable] Value: $(get_octopusvariable "ProcessTemplates[test].test.param")"
                 
                 echo ""
                 echo "--- Raw account references (no .Username/.Password) ---"
                 echo ""
-                echo "[get_octopusvariable] compliance-account: $(get_octopusvariable "ProcessTemplates[Test].compliance-account")"
-                echo "[get_octopusvariable] test.account: $(get_octopusvariable "ProcessTemplates[Test].test.account")"
-                echo "[get_octopusvariable] compliance.check.account: $(get_octopusvariable "ProcessTemplates[Test].compliance.check.account")"
-                echo "[get_octopusvariable] test.param: $(get_octopusvariable "ProcessTemplates[Test].test.param")"
+                echo "[get_octopusvariable] compliance-account: $(get_octopusvariable "ProcessTemplates[test].compliance-account")"
+                echo "[get_octopusvariable] test.account: $(get_octopusvariable "ProcessTemplates[test].test.account")"
+                echo "[get_octopusvariable] compliance.check.account: $(get_octopusvariable "ProcessTemplates[test].compliance.check.account")"
+                echo "[get_octopusvariable] test.param: $(get_octopusvariable "ProcessTemplates[test].test.param")"
                 
                 echo ""
                 echo "--- Without ProcessTemplates prefix (control) ---"
@@ -132,38 +132,6 @@ step "run-a-script" {
                 echo "============================================"
                 echo "Test complete"
                 echo "============================================"
-                EOT
-            Octopus.Action.Script.ScriptSource = "Inline"
-            Octopus.Action.Script.Syntax = "Bash"
-            OctopusUseBundledTooling = "False"
-        }
-        worker_pool_variable = "#{tmp.workerpool}"
-    }
-}
-
-step "run-a-script2" {
-    name = "Run a Script2"
-
-    action {
-        action_type = "Octopus.Script"
-        properties = {
-            Octopus.Action.RunOnServer = "true"
-            Octopus.Action.Script.ScriptBody = <<-EOT
-                usern=$(get_octopusvariable "ProcessTemplates[test].template.account.Username")
-                passwo=$(get_octopusvariable "ProcessTemplates[test].template.account.Password")
-                echo "User name: $usern"
-                echo "Password: $passwo"
-                
-                echo "Direct: #{ProcessTemplates[test].template.account.Username}"
-                
-                echo "-------------"
-                
-                usern=$(get_octopusvariable "ProcessTemplates[Test].template.account.Username")
-                passwo=$(get_octopusvariable "ProcessTemplates[Test].template.account.Password")
-                echo "User name: $usern"
-                echo "Password: $passwo"
-                
-                echo "Direct: #{ProcessTemplates[Test].template.account.Username}"
                 EOT
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "Bash"
