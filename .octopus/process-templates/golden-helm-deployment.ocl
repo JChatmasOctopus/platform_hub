@@ -93,7 +93,7 @@ step "inject-secrets-from-vault" {
         action_type = "Octopus.Script"
         properties = {
             Octopus.Action.RunOnServer = "true"
-            Octopus.Action.Script.ScriptBody = "write-host \"Pulling secretsd\""
+            Octopus.Action.Script.ScriptBody = "write-host \"Pulling secrets\""
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
             OctopusUseBundledTooling = "False"
