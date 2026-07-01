@@ -116,6 +116,9 @@ step "run-smoke-test" {
 
 step "compliance" {
     name = "Compliance"
+    properties = {
+        Octopus.Action.TargetRoles = "#{Template.Target.Tags}"
+    }
 
     action {
         action_type = "Octopus.Script"
