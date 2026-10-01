@@ -1,0 +1,13 @@
+variable "project.api.endpoint" {
+    value "prod.app.com" {
+        environment_parameter = ["project.environment"]
+    }
+
+    value "dev.app.com" {
+        environment_parameter = ["project.environment"]
+    }
+
+    value "qa.app.com" {
+        environment_parameter = ["project.environment"]
+    }
+}
