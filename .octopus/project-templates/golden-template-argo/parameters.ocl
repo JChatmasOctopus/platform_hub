@@ -13,3 +13,11 @@ parameter "Template.Worker.Pool" {
     help_text = ""
     label = "Worker Pool"
 }
+
+parameter "Test" {
+    display_settings = {
+        Octopus.ControlType = "SingleLineText"
+    }
+    help_text = ""
+    label = ""
+}
