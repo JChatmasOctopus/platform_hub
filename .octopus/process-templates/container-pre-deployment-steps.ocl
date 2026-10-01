@@ -24,6 +24,16 @@ parameter "api.key" {
     value "0b360ce7-82be-466a-8f28-344e9e70dcb4" {}
 }
 
+parameter "apikey" {
+    display_settings = {
+        Octopus.ControlType = "SingleLineText"
+    }
+    help_text = ""
+    label = ""
+
+    value "asdf" {}
+}
+
 step "verify-attestation" {
     name = "Verify attestation"
 
