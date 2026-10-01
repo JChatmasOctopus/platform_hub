@@ -45,3 +45,13 @@ parameter "project.environment" {
     help_text = ""
     label = "Environment"
 }
+
+parameter "project.app.name" {
+    display_settings = {
+        Octopus.ControlType = "SingleLineText"
+    }
+    help_text = ""
+    label = "App Name"
+
+    value "ProjectName" {}
+}
