@@ -14,6 +14,16 @@ parameter "ProcessTemplate.Worker.Pool" {
     label = "Worker Pool"
 }
 
+parameter "api.key" {
+    display_settings = {
+        Octopus.ControlType = "Sensitive"
+    }
+    help_text = ""
+    label = "API Key"
+
+    value "0b360ce7-82be-466a-8f28-344e9e70dcb4" {}
+}
+
 step "verify-attestation" {
     name = "Verify attestation"
 
