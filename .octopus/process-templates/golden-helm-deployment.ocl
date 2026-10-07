@@ -22,7 +22,7 @@ parameter "template.worker.pool" {
     label = "Worker Pool"
 }
 
-parameter "template.chart.directory" {
+parameter "template.chartdirectory" {
     display_settings = {
         Octopus.ControlType = "SingleLineText"
     }
