@@ -77,7 +77,7 @@ step "validate-helm-values" {
         action_type = "Octopus.Script"
         properties = {
             Octopus.Action.RunOnServer = "true"
-            Octopus.Action.Script.ScriptBody = "write-host \"validating helm values again\""
+            Octopus.Action.Script.ScriptBody = "write-host \"Validating helm values again\""
             Octopus.Action.Script.ScriptSource = "Inline"
             Octopus.Action.Script.Syntax = "PowerShell"
             OctopusUseBundledTooling = "False"
