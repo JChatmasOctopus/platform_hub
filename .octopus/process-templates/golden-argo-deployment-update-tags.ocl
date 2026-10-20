@@ -42,8 +42,9 @@ step "update-argo-cd-application-image-tags" {
         }
         worker_pool_variable = "#{template.worker.pool}"
 
-        packages "template.container.image" {
+        packages "octopub-frontend" {
             acquisition_location = "NotAcquired"
+            feed = "octopus-server-built-in"
             package_id = ""
             properties = {
                 Extract = "false"
