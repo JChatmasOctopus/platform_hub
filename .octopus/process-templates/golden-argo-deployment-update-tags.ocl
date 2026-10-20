@@ -1,0 +1,2 @@
+name = "Golden Argo Deployment - Update Tags"
+description = "A standardized deployment process for updating image tags for an ArgoCD application. Included security scanning."
