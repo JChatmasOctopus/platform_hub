@@ -36,6 +36,8 @@ parameter "template.kubernetes.namespace" {
     }
     help_text = "Kubernetes Namespace to deploy the Helm chart"
     label = "Kubernetes Namespace"
+
+    value "#{namespace}" {}
 }
 
 parameter "template.repository.url" {
