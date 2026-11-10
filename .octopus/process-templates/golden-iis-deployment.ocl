@@ -54,7 +54,7 @@ parameter "parameter.install.path" {
 }
 
 step "free-port-80" {
-    name = "Free port 80"
+    name = "Stop Default Web Site"
     properties = {
         Octopus.Action.TargetRoles = "#{parameter.target.tag}"
     }
@@ -110,7 +110,7 @@ step "deploy-to-iis" {
             Octopus.Action.IISWebSite.ApplicationPoolFrameworkVersion = "No Managed Code"
             Octopus.Action.IISWebSite.ApplicationPoolIdentityType = "ApplicationPoolIdentity"
             Octopus.Action.IISWebSite.ApplicationPoolName = "#{parameter.app.pool}"
-            Octopus.Action.IISWebSite.Bindings = "[{\"protocol\":\"http\",\"ipAddress\":\"*\",\"port\":\"80\",\"host\":\"\",\"thumbprint\":null,\"certificateVariable\":null,\"requireSni\":\"False\",\"enabled\":\"True\"}]"
+            Octopus.Action.IISWebSite.Bindings = "[{\"protocol\":\"http\",\"ipAddress\":\"*\",\"port\":\"#{parameter.port.number}\",\"host\":\"\",\"thumbprint\":null,\"certificateVariable\":null,\"requireSni\":\"False\",\"enabled\":\"True\"}]"
             Octopus.Action.IISWebSite.CreateOrUpdateWebSite = "True"
             Octopus.Action.IISWebSite.DeploymentType = "webSite"
             Octopus.Action.IISWebSite.EnableAnonymousAuthentication = "True"
@@ -130,6 +130,8 @@ step "deploy-to-iis" {
 
         packages {
             acquisition_location = "Server"
+            feed = "octopus-server-built-in"
+            package_id = ""
             properties = {
                 PackageParameterName = "parameter.package.name"
                 SelectionMode = "deferred"
