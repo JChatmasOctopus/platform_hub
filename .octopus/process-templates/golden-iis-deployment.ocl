@@ -1,0 +1,2 @@
+name = "Golden IIS Deployment"
+description = "A standardized deployment process for .NET web applications on IIS. It includes steps to deploy a package to a Windows target, configure the IIS website, application pool, and bindings, apply configuration transforms and variable substitution, and run a post-deployment health check. Use it to keep IIS deployments consistent across environments and tenants."
