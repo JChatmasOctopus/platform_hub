@@ -139,3 +139,32 @@ step "deploy-to-iis" {
         }
     }
 }
+
+step "run-smoke-test" {
+    name = "Run Smoke Test"
+    properties = {
+        Octopus.Action.TargetRoles = "#{parameter.target.tag}"
+    }
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.RunOnServer = "false"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                $url = "http://localhost:$OctopusParameters["parameter.port.number"]/"
+                $deadline = (Get-Date).AddSeconds(60)
+                do {
+                    try {
+                        $r = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 10
+                        if ($r.StatusCode -eq 200) { Write-Host "Smoke test passed: $url returned 200"; exit 0 }
+                    } catch { Write-Host "Waiting for $url ..." }
+                    Start-Sleep -Seconds 5
+                } while ((Get-Date) -lt $deadline)
+                throw "Smoke test failed: $url did not return 200 within 60 seconds"
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+        }
+        worker_pool_variable = ""
+    }
+}
