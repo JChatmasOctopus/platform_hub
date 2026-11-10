@@ -1,2 +1,139 @@
 name = "Golden IIS Deployment"
 description = "A standardized deployment process for .NET web applications on IIS. It includes steps to deploy a package to a Windows target, configure the IIS website, application pool, and bindings, apply configuration transforms and variable substitution, and run a post-deployment health check. Use it to keep IIS deployments consistent across environments and tenants."
+
+parameter "parameter.package.name" {
+    display_settings = {
+        Octopus.ControlType = "Package"
+    }
+    help_text = ""
+    label = "Package"
+}
+
+parameter "parameter.target.tag" {
+    display_settings = {
+        Octopus.ControlType = "TargetTags"
+    }
+    help_text = ""
+    label = "Target Tag"
+}
+
+parameter "parameter.site.name" {
+    display_settings = {
+        Octopus.ControlType = "SingleLineText"
+    }
+    help_text = ""
+    label = "Site Name"
+}
+
+parameter "parameter.app.pool" {
+    display_settings = {
+        Octopus.ControlType = "SingleLineText"
+    }
+    help_text = ""
+    label = "App Pool"
+}
+
+parameter "parameter.port.number" {
+    display_settings = {
+        Octopus.ControlType = "SingleLineText"
+    }
+    help_text = ""
+    label = "Port Number"
+
+    value "80" {}
+}
+
+parameter "parameter.install.path" {
+    display_settings = {
+        Octopus.ControlType = "SingleLineText"
+    }
+    help_text = ""
+    label = "Install Path"
+
+    value "C:\\Sites\\MemberPortal" {}
+}
+
+step "free-port-80" {
+    name = "Free port 80"
+    properties = {
+        Octopus.Action.TargetRoles = "#{parameter.target.tag}"
+    }
+
+    action {
+        action_type = "Octopus.Script"
+        properties = {
+            Octopus.Action.RunOnServer = "false"
+            Octopus.Action.Script.ScriptBody = <<-EOT
+                Import-Module WebAdministration
+                $name = 'Default Web Site'
+                if (Get-Website -Name $name -ErrorAction SilentlyContinue) {
+                    if ((Get-Website -Name $name).State -ne 'Stopped') {
+                        Stop-Website -Name $name
+                        Write-Host "Stopped '$name' so MemberPortal can use port 80"
+                    }
+                    Set-ItemProperty "IIS:\Sites\$name" -Name serverAutoStart -Value $false
+                } else {
+                    Write-Host "'$name' not present"
+                }
+                EOT
+            Octopus.Action.Script.ScriptSource = "Inline"
+            Octopus.Action.Script.Syntax = "PowerShell"
+        }
+        worker_pool_variable = ""
+    }
+}
+
+step "deploy-to-iis" {
+    name = "Deploy to IIS"
+    properties = {
+        Octopus.Action.TargetRoles = "#{parameter.target.tag}"
+    }
+
+    action {
+        action_type = "Octopus.IIS"
+        properties = {
+            Octopus.Action.CustomScripts.PreDeploy.ps1 = <<-EOT
+                # Stop the app pool so the running site doesn't lock files while the new version is copied in.
+                Import-Module WebAdministration
+                $pool = $OctopusParameters['Octopus.Action.IISWebSite.ApplicationPoolName']
+                if (Test-Path "IIS:\AppPools\$pool") {
+                    if ((Get-WebAppPoolState -Name $pool).Value -ne 'Stopped') {
+                        Stop-WebAppPool -Name $pool
+                        for ($i = 0; $i -lt 30 -and (Get-WebAppPoolState -Name $pool).Value -ne 'Stopped'; $i++) { Start-Sleep -Seconds 1 }
+                        Write-Host "Stopped app pool $pool"
+                    }
+                } else {
+                    Write-Host "App pool $pool doesn't exist yet"
+                }
+                EOT
+            Octopus.Action.EnabledFeatures = "Octopus.Features.IISWebSite,,Octopus.Features.CustomDirectory,Octopus.Features.CustomScripts,Octopus.Features.JsonConfigurationVariables"
+            Octopus.Action.IISWebSite.ApplicationPoolFrameworkVersion = "No Managed Code"
+            Octopus.Action.IISWebSite.ApplicationPoolIdentityType = "ApplicationPoolIdentity"
+            Octopus.Action.IISWebSite.ApplicationPoolName = "#{parameter.app.pool}"
+            Octopus.Action.IISWebSite.Bindings = "[{\"protocol\":\"http\",\"ipAddress\":\"*\",\"port\":\"80\",\"host\":\"\",\"thumbprint\":null,\"certificateVariable\":null,\"requireSni\":\"False\",\"enabled\":\"True\"}]"
+            Octopus.Action.IISWebSite.CreateOrUpdateWebSite = "True"
+            Octopus.Action.IISWebSite.DeploymentType = "webSite"
+            Octopus.Action.IISWebSite.EnableAnonymousAuthentication = "True"
+            Octopus.Action.IISWebSite.EnableBasicAuthentication = "False"
+            Octopus.Action.IISWebSite.EnableWindowsAuthentication = "False"
+            Octopus.Action.IISWebSite.StartApplicationPool = "True"
+            Octopus.Action.IISWebSite.StartWebSite = "True"
+            Octopus.Action.IISWebSite.WebApplication.ApplicationPoolFrameworkVersion = "v4.0"
+            Octopus.Action.IISWebSite.WebApplication.ApplicationPoolIdentityType = "ApplicationPoolIdentity"
+            Octopus.Action.IISWebSite.WebRootType = "packageRoot"
+            Octopus.Action.IISWebSite.WebSiteName = "#{parameter.site.name}"
+            Octopus.Action.Package.CustomInstallationDirectory = "#{parameter.install.path}"
+            Octopus.Action.Package.CustomInstallationDirectoryShouldBePurgedBeforeDeployment = "True"
+            Octopus.Action.Package.JsonConfigurationVariablesTargets = "appsettings.json"
+        }
+        worker_pool_variable = ""
+
+        packages {
+            acquisition_location = "Server"
+            properties = {
+                PackageParameterName = "parameter.package.name"
+                SelectionMode = "deferred"
+            }
+        }
+    }
+}
