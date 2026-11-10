@@ -1,0 +1,39 @@
+name = "Production deployments must use a Platform Hub process template"
+violation_action = "block"
+violation_reason = "Production deployments must use a Platform Hub process template."
+
+conditions {
+    rego = <<-EOT
+            package production_deployments_must_use_a_process_template
+
+            # Default: Deny all deployments
+            default result := {"allowed": false}
+
+            # Allow: At least one step comes from a Platform Hub process template and is not skipped
+            result := {"allowed": true} if {
+            	some step in input.Steps
+
+            	# Ensure the step is derived from a Process Template
+            	step.Source.Type == "Process Template"
+
+            	# Verify this step hasn't been added to the skipped list
+            	not step.Id in input.SkippedSteps
+            }
+            EOT
+}
+
+scope {
+    rego = <<-EOT
+                package production_deployments_must_use_a_process_template
+
+                default evaluate := false
+
+                # Only Production deployments of projects in the Sandbox project group of the Premera Demo space
+                evaluate := true if {
+                    input.Space.Slug == "premera-demo"
+                    input.ProjectGroup.Slug == "sandbox"
+                    input.Environment.Slug == "production"
+                    not input.Runbook
+                }
+            EOT
+}
